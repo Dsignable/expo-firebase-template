@@ -14,6 +14,7 @@ This document outlines our standard procedures for creating, developing, and mai
 6. [Testing Procedures](#testing-procedures)
 7. [Deployment Process](#deployment-process)
 8. [Troubleshooting Common Issues](#troubleshooting-common-issues)
+9. [Developer Tools & Features](#developer-tools--features)
 
 ---
 
@@ -48,9 +49,52 @@ This document outlines our standard procedures for creating, developing, and mai
 
 ### Starting a New Project
 
+There are multiple ways to start a new project:
+
+#### Option 1: Using GitHub Web Interface
+
+1. Visit [GitHub](https://github.com/dsignable/expo-firebase-template)
+2. Click "Use this template" to create a new repository based on this template
+3. Clone the new repository:
+   ```bash
+   git clone https://github.com/yourusername/my-new-project.git
+   cd my-new-project
+   ```
+
+4. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+#### Option 2: Using GitHub CLI (Recommended)
+
+1. Install GitHub CLI if not already installed:
+   - macOS: `brew install gh`
+   - Windows: `winget install GitHub.cli`
+   - Linux: See the [GitHub CLI installation guide](https://github.com/cli/cli/blob/trunk/docs/install_linux.md)
+
+2. Authenticate with GitHub:
+   ```bash
+   gh auth login
+   ```
+
+3. Create a new repository from the template:
+   ```bash
+   gh repo create my-new-project --template dsignable/expo-firebase-template --public
+   ```
+
+4. Clone and set up the new repository:
+   ```bash
+   git clone https://github.com/yourusername/my-new-project.git
+   cd my-new-project
+   npm install
+   ```
+
+#### Option 3: Direct Clone
+
 1. Clone the template repository:
    ```bash
-   git clone https://github.com/yourusername/expo-firebase-template.git my-new-project
+   git clone https://github.com/dsignable/expo-firebase-template.git my-new-project
    cd my-new-project
    ```
 
@@ -71,9 +115,17 @@ This document outlines our standard procedures for creating, developing, and mai
 
 5. Initialize version control:
    ```bash
+   rm -rf .git
    git init
    git add .
    git commit -m "Initial commit from template"
+   ```
+
+6. Create a new repository on GitHub and push:
+   ```bash
+   gh repo create my-new-project --public
+   git remote add origin https://github.com/yourusername/my-new-project.git
+   git push -u origin main
    ```
 
 ## Code Organization & Styling
@@ -207,6 +259,73 @@ Follow the established folder structure (see README.md).
 
 ## Troubleshooting Common Issues
 
+### Firebase Configuration Issues
+
+#### Demo Mode and Firebase Configuration
+
+The template is designed to work in two modes:
+
+1. **Demo Mode** (Default): When Firebase credentials are not configured, the app operates in demo mode:
+   - No Firebase-related errors appear in the console
+   - A friendly message appears in the console explaining the situation
+   - Placeholder Firebase services are provided that safely handle method calls
+   - UI can be developed without Firebase backend
+
+2. **Production Mode**: When Firebase credentials are properly configured in the `.env` file:
+   - Firebase services are fully initialized
+   - All Firebase features work as expected
+   - A success message appears in the console confirming Firebase initialization
+
+**How the Template Handles Missing Firebase Configuration**:
+
+1. The `src/services/firebase/config.js` file checks for valid Firebase credentials
+2. If credentials are missing or invalid, it provides placeholder implementations
+3. These placeholders prevent errors from crashing the application
+4. All Firebase service methods are safely mocked to return appropriate responses
+
+**For Team Onboarding**:
+
+1. Inform new team members that they can start development immediately without Firebase setup
+2. Provide the `.env` file with Firebase credentials when they need to work with actual data
+3. Explain the console messages they might see regarding demo mode
+4. Point out the "Developer Options" section on the login screen that allows bypassing auth
+
+**Implementation Details**:
+
+The Firebase configuration check uses the `isFirebaseConfigured` function which:
+- Verifies the API key is present
+- Confirms it's not the placeholder value from the example file
+- Handles any potential errors in configuration
+
+#### Configuring Firebase
+
+When ready to use actual Firebase services:
+
+1. Create a new Firebase project in the [Firebase Console](https://console.firebase.google.com/)
+2. Obtain your Firebase configuration:
+   - Go to Project Settings > General
+   - Scroll down to "Your apps" section
+   - Click on the web app (or create one if none exists)
+   - Copy the Firebase configuration object
+3. Configure environment variables:
+   ```bash
+   cp .env.example .env
+   ```
+4. Edit the `.env` file with your Firebase credentials:
+   ```
+   FIREBASE_API_KEY=your_api_key_here
+   FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
+   FIREBASE_PROJECT_ID=your_project_id
+   FIREBASE_STORAGE_BUCKET=your_project_id.appspot.com
+   FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+   FIREBASE_APP_ID=your_app_id
+   FIREBASE_MEASUREMENT_ID=your_measurement_id
+   ```
+5. Restart the Expo development server with cache clearing:
+   ```bash
+   npm start -- --clear-cache
+   ```
+
 ### Expo Build Issues
 
 1. Clear cache: `expo start -c`
@@ -223,4 +342,79 @@ Follow the established folder structure (see README.md).
 
 1. Check webpack config
 2. Verify web-compatible libraries
-3. Test with different browsers 
+3. Test with different browsers
+
+## Developer Tools & Features
+
+### Developer Bypass Login
+
+The template includes a developer bypass feature to make it easier for new team members to explore the app without Firebase configuration.
+
+#### How to Use Developer Mode
+
+1. On the login screen, scroll to the "Developer Options" section
+2. Click the "Bypass Login (Dev Mode)" or "Skip Login (Demo Mode)" button
+3. This creates a mock user with the following properties:
+   ```js
+   {
+     uid: 'dev-user-id',
+     email: 'dev@example.com',
+     displayName: 'Dev User',
+     isDev: true
+   }
+   ```
+4. You'll be logged in and can explore the full app
+
+#### Implementation Details
+
+The developer bypass is implemented in two parts:
+
+1. **AuthContext.js**: Contains a `setDevUser` function that creates a mock user
+   ```js
+   const setDevUser = (userData = {}) => {
+     const devUser = {
+       uid: 'dev-user-id',
+       email: 'dev@example.com',
+       displayName: 'Dev User',
+       ...userData,
+       isDev: true
+     };
+     
+     setUser(devUser);
+   };
+   ```
+
+2. **LoginScreen.js**: Contains a button that calls `setDevUser` when pressed
+   ```js
+   <TouchableOpacity 
+     style={[styles.button, styles.devButton]}
+     onPress={handleDevBypass}
+   >
+     <Text style={styles.buttonText}>
+       {isFirebaseConfigured ? 'Bypass Login (Dev Mode)' : 'Skip Login (Demo Mode)'}
+     </Text>
+   </TouchableOpacity>
+   ```
+
+#### Best Practices for Development Mode
+
+1. **Always Remove in Production**: Make sure to disable or remove the dev bypass option in production builds
+2. **Testing with Real Users**: Use real Firebase authentication for testing user-specific functionality
+3. **Mock Data**: When using bypass login, you may need to create mock data for testing
+
+#### Customizing the Developer Bypass
+
+You can customize the developer user profile by modifying the call to setDevUser:
+
+```js
+// In LoginScreen.js
+const handleDevBypass = () => {
+  setDevUser({
+    displayName: 'Custom Name',
+    email: 'custom@example.com',
+    // Add any properties your app needs
+    role: 'admin',
+    permissions: ['read', 'write'],
+  });
+};
+``` 

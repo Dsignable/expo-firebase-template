@@ -16,6 +16,7 @@ A comprehensive template for quickly setting up professional React Native web/mo
 - 🧪 Testing setup with Jest
 - 📝 TypeScript support
 - 🛠️ ESLint and Prettier configured
+- 👨‍💻 Developer mode with login bypass for easy exploration
 
 ## 🚀 Quick Start
 
@@ -23,9 +24,35 @@ A comprehensive template for quickly setting up professional React Native web/mo
 
 ```bash
 # Clone this template
-git clone https://github.com/yourusername/expo-firebase-template.git my-new-project
+git clone https://github.com/dsignable/expo-firebase-template.git my-new-project
 
 # Navigate to project
+cd my-new-project
+
+# Install dependencies
+npm install
+
+# Set up Firebase config
+cp .env.example .env
+# Edit .env with your Firebase credentials
+
+# Start development
+npm start
+```
+
+### Alternative: Using GitHub CLI
+
+```bash
+# Install GitHub CLI if not already installed
+# macOS: brew install gh
+# Windows: winget install GitHub.cli
+# Linux: See https://github.com/cli/cli/blob/trunk/docs/install_linux.md
+
+# Create a new repository from this template
+gh repo create my-new-project --template dsignable/expo-firebase-template --public
+
+# Clone the new repository
+git clone https://github.com/yourusername/my-new-project.git
 cd my-new-project
 
 # Install dependencies
@@ -180,6 +207,42 @@ eas build --platform ios
 # Build for Android
 eas build --platform android
 ```
+
+## 🔧 Developer Features
+
+### Demo Mode / Development Mode
+
+The template includes several developer-friendly features:
+
+1. **Firebase Demo Mode**: The app works even without Firebase configured, using mock services.
+
+2. **Login Bypass Button**: On the login screen, you'll find a developer option to bypass authentication.
+   - This lets you explore the full app without setting up Firebase
+   - Perfect for new developers onboarding to the project
+   - Shows different text based on whether Firebase is configured
+
+3. **Environment Detection**: The app automatically detects when it's running in development mode.
+
+These features make it easy for new team members to start working with the codebase immediately.
+
+## ❓ Troubleshooting
+
+### Firebase API Key Error
+
+The template is designed to work immediately, even without Firebase configuration. When starting a new project:
+
+1. **Demo Mode**: The app will start in demo mode if Firebase is not configured, showing a helpful message in the console.
+2. **No Errors**: You won't see Firebase initialization errors even without credentials.
+3. **How It Works**: The template uses placeholder implementations when Firebase credentials are missing.
+
+To fully enable Firebase features:
+
+1. Create a Firebase project at [firebase.google.com](https://firebase.google.com)
+2. Get your Firebase configuration (API keys, etc.)
+3. Copy `.env.example` to `.env` and update with your Firebase credentials
+4. Restart your Expo development server with `npm start --clear-cache`
+
+The app will automatically detect your credentials and switch from demo mode to fully-functional Firebase mode.
 
 ## 📄 License
 

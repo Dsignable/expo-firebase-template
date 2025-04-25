@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { subscribeToAuthChanges, getCurrentUser } from '../services/firebase/auth';
+import { isFirebaseConfigured } from '../services/firebase/config';
 
 // Create the context
 const AuthContext = createContext();
@@ -24,6 +25,25 @@ export function AuthProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
+  // Function to set a development user (bypassing Firebase auth)
+  const setDevUser = (userData = {}) => {
+    const devUser = {
+      uid: 'dev-user-id',
+      email: 'dev@example.com',
+      displayName: 'Dev User',
+      photoURL: null,
+      emailVerified: true,
+      isAnonymous: false,
+      ...userData,
+      // Mark as development user
+      isDev: true
+    };
+    
+    setUser(devUser);
+    setLoading(false);
+    console.log('🔧 Development mode: Using mock user', devUser);
+  };
+
   // Clear any authentication errors
   const clearError = () => setError(null);
 
@@ -34,8 +54,11 @@ export function AuthProvider({ children }) {
     error,
     setError,
     clearError,
+    setDevUser,
     isAuthenticated: !!user,
     isGuest: user && user.isAnonymous,
+    isDev: user && user.isDev,
+    isFirebaseConfigured: isFirebaseConfigured()
   };
 
   return (

@@ -14,38 +14,38 @@ export const BREAKPOINTS = {
 // Color palette
 export const COLORS = {
   // Primary brand colors
-  primary: '#3366FF',
-  primaryLight: '#5C8DFF',
-  primaryDark: '#0045E5',
+  primary: '#404040',
+  primaryLight: '#606060',
+  primaryDark: '#202020',
   
   // Secondary brand colors
-  secondary: '#00C9A7',
-  secondaryLight: '#33D4BA',
-  secondaryDark: '#00A089',
+  secondary: '#707070',
+  secondaryLight: '#909090',
+  secondaryDark: '#505050',
   
   // Accent colors
-  accent: '#FF6B6B',
-  accentLight: '#FF9292',
-  accentDark: '#E54D4D',
+  accent: '#A0A0A0',
+  accentLight: '#C0C0C0',
+  accentDark: '#808080',
   
   // Semantic colors
-  success: '#00C853',
-  warning: '#FFD600',
-  error: '#FF3D00',
-  info: '#00B0FF',
+  success: '#2E7D32',
+  warning: '#F9A825',
+  error: '#C62828',
+  info: '#546E7A',
   
   // Neutral colors
   white: '#FFFFFF',
   black: '#000000',
-  gray100: '#F7F9FC',
-  gray200: '#EDF1F7',
-  gray300: '#E4E9F2',
-  gray400: '#C5CEE0',
-  gray500: '#8F9BB3',
-  gray600: '#4B5264',
-  gray700: '#2E3A59',
-  gray800: '#222B45',
-  gray900: '#1A2138',
+  gray100: '#F8F9FA',
+  gray200: '#E9ECEF',
+  gray300: '#DEE2E6',
+  gray400: '#CED4DA',
+  gray500: '#ADB5BD',
+  gray600: '#6C757D',
+  gray700: '#495057',
+  gray800: '#343A40',
+  gray900: '#212529',
   
   // Transparent colors
   transparent: 'transparent',
@@ -55,8 +55,8 @@ export const COLORS = {
 
 // Color themes
 export const LIGHT_THEME = {
-  background: COLORS.white,
-  surface: COLORS.gray100,
+  background: COLORS.gray100,
+  surface: COLORS.white,
   text: COLORS.gray900,
   textSecondary: COLORS.gray700,
   border: COLORS.gray300,
